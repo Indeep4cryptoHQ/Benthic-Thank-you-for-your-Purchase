@@ -1,0 +1,889 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Thank You — The Benthic Library</title>
+  <meta name="description" content="Your purchase from The Benthic Business &amp; Intelligence Library is complete." />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#030d0f" />
+  <link rel="icon" type="image/png" href="assets/benthic-seal.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Iceland&family=IBM+Plex+Mono:wght@400;500&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+
+  <script>
+    /*
+     * ── CONFIGURATION ─────────────────────────────────────────────────────
+     * The only part of this file you should need to edit.
+     *
+     * storeApiUrl   Your store-api Edge Function URL (the same value as the
+     *               Library site's NEXT_PUBLIC_STORE_API_URL), no trailing
+     *               slash. When set, buyers arriving with ?session_id=… see
+     *               their real order and download links. When blank, the
+     *               page shows a general thank-you instead.
+     * libraryUrl    Where "Return to the Stacks" goes.
+     * newsletterUrl Your Compass Ledger (beehiiv) signup page. Leave blank
+     *               to hide that step.
+     * supportEmail  Shown for "something went wrong" help. Leave blank to
+     *               hide it.
+     */
+    window.BENTHIC_CONFIG = {
+      storeApiUrl: "",
+      libraryUrl: "/",
+      newsletterUrl: "",
+      supportEmail: "",
+    };
+  </script>
+
+  <style>
+    :root {
+      --abyss-950: #030d0f;
+      --abyss-900: #071a1d;
+      --abyss-800: #0a2529;
+      --abyss-700: #0f2f33;
+      --abyss-600: #17444a;
+
+      --surface-panel: #0c2429;
+      --surface-panel-raised: #12353b;
+
+      --accent-primary: #c9962f;
+      --accent-primary-bright: #e8bb52;
+      --accent-primary-dim: #8a6a26;
+      --accent-signal: #57e0cd;
+      --accent-signal-dim: #2f8b7d;
+
+      --status-danger: #e8735c;
+      --status-warning: #e0a83f;
+      --status-success: #6fbf73;
+
+      --text-primary: #f1ede4;
+      --text-secondary: #b9c4c2;
+      --text-tertiary: #7c8f8d;
+      --text-on-accent: #1a1206;
+
+      --surface-paper: #efe2d2;
+      --surface-paper-edge: #d8cdb8;
+      --text-on-paper: #2a2015;
+      --text-on-paper-secondary: #6b5f4c;
+
+      --border-subtle: rgba(201, 150, 47, 0.16);
+      --radius-md: 6px;
+      --radius-lg: 9px;
+      --radius-xl: 12px;
+      --shadow-panel: 0 8px 24px rgba(0, 0, 0, 0.35);
+      --shadow-page: 0 20px 60px rgba(0, 0, 0, 0.5);
+
+      --font-display: "Iceland", sans-serif;
+      --font-serif: "Spectral", Georgia, serif;
+      --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background: var(--abyss-950);
+      color: var(--text-primary);
+      font-family: var(--font-serif);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent-signal); }
+    a:hover { color: var(--accent-primary-bright); }
+    button { font: inherit; color: inherit; }
+    img { display: block; max-width: 100%; }
+    :focus-visible { outline: 2px solid var(--accent-signal); outline-offset: 3px; border-radius: 4px; }
+
+    /* ── Ocean backdrop ─────────────────────────────────────────────── */
+    #sea {
+      position: fixed; inset: 0; width: 100%; height: 100%;
+      z-index: 0; display: block;
+      background:
+        radial-gradient(120% 70% at 50% -10%, rgba(87, 224, 205, 0.10), transparent 60%),
+        linear-gradient(180deg, var(--abyss-800) 0%, var(--abyss-900) 35%, var(--abyss-950) 100%);
+    }
+
+    .page { position: relative; z-index: 1; }
+
+    /* ── Header ─────────────────────────────────────────────────────── */
+    header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 0 clamp(16px, 4vw, 26px); height: 68px;
+      background: linear-gradient(180deg, rgba(15, 47, 51, 0.85), rgba(10, 37, 41, 0.7));
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    }
+    header a { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text-primary); }
+    header img { width: 34px; height: 34px; }
+    .wordmark { font-family: var(--font-display); font-size: 18px; letter-spacing: .06em; white-space: nowrap; }
+    .header-depth {
+      margin-left: auto; font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary);
+      letter-spacing: .06em; white-space: nowrap;
+    }
+    .header-depth b { color: var(--accent-signal); font-weight: 500; }
+
+    /* ── Ascent intro ───────────────────────────────────────────────── */
+    #ascent {
+      position: fixed; inset: 0; z-index: 50;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+      background: radial-gradient(60% 50% at 50% 50%, rgba(10, 37, 41, 0.92), rgba(3, 13, 15, 0.98));
+      transition: opacity .8s ease, visibility .8s ease;
+      cursor: pointer; text-align: center; padding: 16px;
+    }
+    #ascent.done { opacity: 0; visibility: hidden; pointer-events: none; }
+    .ascent-label { font-family: var(--font-display); letter-spacing: .2em; font-size: 13px; color: var(--text-tertiary); text-transform: uppercase; }
+    .ascent-depth { font-family: var(--font-mono); font-size: clamp(44px, 12vw, 84px); color: var(--accent-signal); text-shadow: 0 0 24px rgba(87, 224, 205, 0.45); font-variant-numeric: tabular-nums; }
+    .ascent-bar { width: min(320px, 80vw); height: 3px; background: var(--abyss-700); border-radius: 3px; overflow: hidden; }
+    .ascent-bar span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--accent-signal-dim), var(--accent-signal)); box-shadow: 0 0 10px var(--accent-signal); }
+    .ascent-skip { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); opacity: .7; }
+
+    /* ── Hero ───────────────────────────────────────────────────────── */
+    main { max-width: 1040px; margin: 0 auto; padding: clamp(28px, 6vw, 64px) 16px 80px; }
+    .hero { text-align: center; display: flex; flex-direction: column; align-items: center; }
+    .seal-wrap { position: relative; width: 148px; height: 148px; margin-bottom: 26px; cursor: pointer; border: 0; background: none; padding: 0; }
+    .seal-wrap img { position: relative; z-index: 2; width: 100%; height: 100%; filter: drop-shadow(0 0 22px rgba(201, 150, 47, 0.45)); transition: transform .4s ease; }
+    .seal-wrap:hover img { transform: rotate(-8deg) scale(1.04); }
+    .ring {
+      position: absolute; inset: 0; border-radius: 50%;
+      border: 1px solid var(--accent-signal); opacity: 0; z-index: 1;
+      animation: sonar 3.6s ease-out infinite;
+    }
+    .ring:nth-child(2) { animation-delay: 1.2s; }
+    .ring:nth-child(3) { animation-delay: 2.4s; }
+    @keyframes sonar { 0% { transform: scale(.9); opacity: .55; } 100% { transform: scale(2.3); opacity: 0; } }
+
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--font-display); font-size: 13px; letter-spacing: .16em; text-transform: uppercase;
+      color: var(--accent-signal); padding: 6px 14px; border-radius: 999px;
+      background: rgba(87, 224, 205, 0.08); border: 1px solid rgba(87, 224, 205, 0.25);
+    }
+    .eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-signal); box-shadow: 0 0 8px var(--accent-signal); animation: blink 1.6s ease-in-out infinite; }
+    @keyframes blink { 50% { opacity: .25; } }
+
+    h1 {
+      font-family: var(--font-serif); font-weight: 300;
+      font-size: clamp(34px, 6.4vw, 60px); line-height: 1.08; margin: 20px 0 14px; letter-spacing: -.01em;
+    }
+    h1 em { font-style: italic; color: var(--accent-primary-bright); font-weight: 400; }
+    .lede { max-width: 620px; color: var(--text-secondary); font-size: clamp(16px, 2.2vw, 18.5px); line-height: 1.6; margin: 0; }
+
+    .reveal { opacity: 0; transform: translateY(14px); transition: opacity .8s ease, transform .8s ease; }
+    .surfaced .reveal { opacity: 1; transform: none; }
+    .surfaced .reveal.d1 { transition-delay: .1s; }
+    .surfaced .reveal.d2 { transition-delay: .25s; }
+    .surfaced .reveal.d3 { transition-delay: .4s; }
+    .surfaced .reveal.d4 { transition-delay: .55s; }
+    .surfaced .reveal.d5 { transition-delay: .7s; }
+
+    /* ── Layout grid ────────────────────────────────────────────────── */
+    .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; margin-top: 52px; align-items: start; }
+    @media (max-width: 820px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+
+    .section-label {
+      font-family: var(--font-display); font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--text-secondary); margin: 0 0 14px;
+    }
+
+    /* ── Receipt (paper) ────────────────────────────────────────────── */
+    .receipt {
+      position: relative; background: var(--surface-paper); color: var(--text-on-paper);
+      border: 1px solid var(--surface-paper-edge); border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-page); padding: clamp(22px, 4vw, 32px);
+    }
+    .receipt::after { /* torn bottom edge */
+      content: ""; position: absolute; left: 0; right: 0; bottom: -8px; height: 9px;
+      background:
+        linear-gradient(-45deg, transparent 6px, var(--surface-paper) 0) 0 0 / 12px 9px repeat-x,
+        linear-gradient(45deg, transparent 6px, var(--surface-paper) 0) 0 0 / 12px 9px repeat-x;
+    }
+    .receipt-head { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+    .receipt-head img { width: 28px; height: 28px; }
+    .receipt-head span { font-size: 13px; letter-spacing: .08em; color: var(--text-on-paper-secondary); }
+    .receipt-meta { font-family: var(--font-mono); font-size: 11px; color: var(--text-on-paper-secondary); display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+    .receipt h2 { font-family: var(--font-serif); font-weight: 400; font-size: 24px; margin: 8px 0 18px; }
+    .stamp {
+      position: absolute; top: 18px; right: 18px; transform: rotate(8deg) scale(1.6); opacity: 0;
+      font-family: var(--font-display); letter-spacing: .14em; font-size: 15px; text-transform: uppercase;
+      color: #2f7a52; border: 2px solid #2f7a52; border-radius: 4px; padding: 3px 9px;
+      transition: transform .35s cubic-bezier(.2, 1.6, .4, 1), opacity .25s ease;
+    }
+    .stamp.show { opacity: .85; transform: rotate(8deg) scale(1); }
+    .stamp.pending { color: #9a6b12; border-color: #9a6b12; }
+    .line { display: flex; justify-content: space-between; gap: 16px; padding: 9px 0; border-bottom: 1px dashed var(--surface-paper-edge); font-size: 15px; }
+    .line span:last-child, .total span:last-child { font-family: var(--font-mono); white-space: nowrap; }
+    .total { display: flex; justify-content: space-between; padding: 14px 0 0; font-size: 17px; font-weight: 500; }
+    .note { font-size: 14px; line-height: 1.55; color: var(--text-on-paper-secondary); margin: 18px 0 0; }
+    .preview-flag { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .06em; background: #e6c98a; color: #4a3612; padding: 2px 7px; border-radius: 3px; }
+
+    .downloads { margin-top: 22px; }
+    .downloads-title { font-family: var(--font-display); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-on-paper-secondary); margin-bottom: 8px; }
+    .dl {
+      display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text-on-paper);
+      padding: 11px 12px; margin: 0 -12px; border-radius: var(--radius-md);
+      transition: background .15s ease;
+    }
+    .dl:hover { background: rgba(42, 32, 21, 0.07); color: var(--text-on-paper); }
+    .dl-icon {
+      flex: none; width: 34px; height: 34px; border-radius: 50%;
+      display: grid; place-items: center; background: var(--abyss-800); color: var(--accent-signal);
+      font-family: var(--font-mono); font-size: 16px;
+    }
+    .dl-text { flex: 1; min-width: 0; }
+    .dl-text b { display: block; font-weight: 500; font-size: 15px; }
+    .dl-text small { font-family: var(--font-mono); font-size: 11px; color: var(--text-on-paper-secondary); }
+    .dl.done .dl-icon { background: #2f7a52; color: #fff; }
+
+    .receipt-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+    .chip {
+      font-family: var(--font-display); letter-spacing: .05em; font-size: 13px;
+      border-radius: var(--radius-md); padding: 7px 13px; cursor: pointer;
+      border: 1px solid var(--surface-paper-edge); background: transparent; color: var(--text-on-paper);
+    }
+    .chip:hover { background: rgba(42, 32, 21, 0.07); }
+
+    .loader { display: flex; align-items: center; gap: 12px; color: var(--text-on-paper-secondary); font-size: 15px; padding: 10px 0; }
+    .loader i { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--surface-paper-edge); border-top-color: var(--abyss-600); animation: spin .9s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Panels (dark) ──────────────────────────────────────────────── */
+    .panel {
+      background: linear-gradient(180deg, rgba(18, 53, 59, 0.82), rgba(12, 36, 41, 0.82));
+      border: 1px solid var(--border-subtle); border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-panel); padding: clamp(20px, 3.5vw, 26px);
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    }
+    .panel + .panel { margin-top: 24px; }
+
+    /* Next-dive checklist */
+    .gauge { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .gauge-track { flex: 1; height: 6px; border-radius: 6px; background: var(--abyss-900); overflow: hidden; border: 1px solid var(--border-subtle); }
+    .gauge-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent-primary-dim), var(--accent-primary-bright)); box-shadow: 0 0 12px rgba(232, 187, 82, .6); transition: width .5s ease; }
+    .gauge-num { font-family: var(--font-mono); font-size: 12px; color: var(--accent-primary-bright); min-width: 38px; text-align: right; }
+
+    .steps { list-style: none; padding: 0; margin: 0; }
+    .step { border-top: 1px solid var(--border-subtle); }
+    .step:first-child { border-top: 0; }
+    .step-head {
+      width: 100%; display: flex; align-items: center; gap: 14px; text-align: left;
+      background: none; border: 0; padding: 14px 0; cursor: pointer;
+    }
+    .check {
+      flex: none; width: 26px; height: 26px; border-radius: 50%;
+      border: 1.5px solid var(--accent-primary-dim); display: grid; place-items: center;
+      transition: background .25s ease, border-color .25s ease, box-shadow .25s ease;
+    }
+    .check svg { width: 14px; height: 14px; stroke: var(--text-on-accent); stroke-width: 3; fill: none; stroke-dasharray: 20; stroke-dashoffset: 20; transition: stroke-dashoffset .3s ease .05s; }
+    .step.done .check { background: var(--accent-primary); border-color: var(--accent-primary); box-shadow: 0 0 12px rgba(201, 150, 47, .5); }
+    .step.done .check svg { stroke-dashoffset: 0; }
+    .step-title { flex: 1; font-size: 16.5px; color: var(--text-primary); }
+    .step.done .step-title { color: var(--text-secondary); }
+    .step-num { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); }
+    .chev { color: var(--text-tertiary); transition: transform .25s ease; font-size: 12px; }
+    .step.open .chev { transform: rotate(180deg); }
+    .step-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .3s ease; }
+    .step.open .step-body { grid-template-rows: 1fr; }
+    .step-body > div { overflow: hidden; }
+    .step-body p { margin: 0 0 14px 40px; color: var(--text-secondary); font-size: 15px; line-height: 1.55; }
+    .step-body .btns { margin: 0 0 16px 40px; display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
+      font-family: var(--font-display); letter-spacing: .05em; font-size: 14px;
+      border-radius: var(--radius-md); padding: 10px 18px; cursor: pointer;
+      border: 1px solid transparent; transition: filter .15s ease, background .15s ease, transform .15s ease;
+    }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--accent-primary); color: var(--text-on-accent); box-shadow: 0 0 14px rgba(201, 150, 47, .35); }
+    .btn-primary:hover { filter: brightness(1.12); color: var(--text-on-accent); }
+    .btn-ghost { background: transparent; border-color: var(--border-subtle); color: var(--text-secondary); }
+    .btn-ghost:hover { background: rgba(87, 224, 205, .07); color: var(--accent-signal); }
+    .btn-sm { padding: 7px 13px; font-size: 13px; }
+
+    /* Signal flare */
+    .flare-panel { text-align: center; }
+    .dispatch {
+      min-height: 3.2em; margin: 4px 0 18px; font-style: italic; font-size: 18px; line-height: 1.5;
+      color: var(--text-primary); transition: opacity .35s ease;
+    }
+    .dispatch.fade { opacity: 0; }
+    .flare-count { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); margin-top: 12px; }
+
+    /* Footer */
+    .cta-row { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: 56px; }
+    footer { text-align: center; color: var(--text-tertiary); font-size: 13px; margin-top: 44px; line-height: 1.6; }
+    footer .mono { font-family: var(--font-mono); font-size: 11px; letter-spacing: .05em; }
+
+    /* Toast */
+    .toast {
+      position: fixed; left: 50%; bottom: 24px; z-index: 60; transform: translate(-50%, 20px); opacity: 0;
+      background: var(--surface-panel-raised); color: var(--text-primary); border: 1px solid rgba(87, 224, 205, .3);
+      padding: 10px 16px; border-radius: 8px; font-size: 14px; box-shadow: var(--shadow-panel);
+      transition: opacity .25s ease, transform .25s ease; pointer-events: none; max-width: calc(100vw - 32px);
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    .hint { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); margin-top: 22px; letter-spacing: .04em; }
+
+    @media (max-width: 520px) {
+      .header-depth { display: none; }
+      .wordmark { font-size: 16px; }
+      .step-body p, .step-body .btns { margin-left: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; }
+      .ring { display: none; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      #sea, header, .hero, .side, .cta-row, footer, .receipt-actions, #ascent, .toast, .hint { display: none !important; }
+      .grid { display: block; margin: 0; }
+      .receipt { box-shadow: none; }
+      .receipt::after { display: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="sea" aria-hidden="true"></canvas>
+
+  <!-- Ascent intro: counts up from the deep, then reveals the page. Click/tap or any key skips it. -->
+  <div id="ascent" role="status" aria-live="polite">
+    <div class="ascent-label">Surfacing your order</div>
+    <div class="ascent-depth"><span id="ascentDepth">3,800</span>m</div>
+    <div class="ascent-bar"><span id="ascentBar"></span></div>
+    <div class="ascent-skip">tap to skip</div>
+  </div>
+
+  <div class="page" id="page">
+    <header>
+      <a href="/" id="homeLink" aria-label="The Benthic Library — home">
+        <img src="assets/benthic-seal.png" alt="" width="34" height="34" />
+        <span class="wordmark">THE BENTHIC LIBRARY</span>
+      </a>
+      <div class="header-depth">DEPTH <b id="headerDepth">0</b>m · SURFACED</div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <button class="seal-wrap reveal d1" id="seal" type="button" aria-label="Ping the seal">
+          <span class="ring"></span><span class="ring"></span><span class="ring"></span>
+          <img src="assets/benthic-seal.png" alt="The Benthic Library seal" width="148" height="148" />
+        </button>
+        <div class="eyebrow reveal d2"><span class="dot"></span><span id="eyebrowText">Transmission received</span></div>
+        <h1 class="reveal d3">Thank you.<br />Your doctrine has <em>surfaced.</em></h1>
+        <p class="lede reveal d4" id="lede">
+          You've added to your shelf in the Benthic Business &amp; Intelligence Library.
+          Your receipt is below. Save your files from this page — the Library doesn't use accounts,
+          so this page is where your downloads live.
+        </p>
+      </section>
+
+      <div class="grid reveal d5">
+        <!-- Receipt -->
+        <section aria-labelledby="receiptLabel">
+          <p class="section-label" id="receiptLabel">Your receipt</p>
+          <div class="receipt" id="receipt">
+            <div class="receipt-head">
+              <img src="assets/benthic-seal.png" alt="" width="28" height="28" />
+              <span>THE BENTHIC EXCHANGE</span>
+            </div>
+            <div class="stamp" id="stamp" aria-hidden="true">Settled</div>
+            <div id="receiptBody">
+              <div class="loader"><i></i> Confirming your settlement…</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Next steps + flare -->
+        <aside class="side">
+          <p class="section-label">Chart your next dive</p>
+          <div class="panel">
+            <div class="gauge">
+              <div class="gauge-track" aria-hidden="true"><div class="gauge-fill" id="gaugeFill"></div></div>
+              <div class="gauge-num" id="gaugeNum" aria-live="polite">0/0</div>
+            </div>
+            <ol class="steps" id="steps"></ol>
+          </div>
+
+          <div class="panel flare-panel">
+            <p class="section-label" style="margin-bottom:6px">A dispatch from the deep</p>
+            <p class="dispatch" id="dispatch">Every doctrine on the shelf began as a single signal from the dark.</p>
+            <button class="btn btn-ghost" id="flareBtn" type="button">✦ Send up a signal flare</button>
+            <div class="flare-count" id="flareCount">Tap anywhere in the water, too.</div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="cta-row">
+        <a class="btn btn-primary" id="stacksBtn" href="/">Return to the Stacks →</a>
+      </div>
+
+      <footer>
+        <div id="supportLine"></div>
+        <div class="mono" style="margin-top:10px">THE BENTHIC BUSINESS &amp; INTELLIGENCE LIBRARY</div>
+      </footer>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+  (function () {
+    "use strict";
+
+    var CFG = window.BENTHIC_CONFIG || {};
+    var API = String(CFG.storeApiUrl || "").replace(/\/+$/, "");
+    var params = new URLSearchParams(location.search);
+    var sessionId = params.get("session_id");
+    var isDemo = params.get("demo") === "1";
+    var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function $(id) { return document.getElementById(id); }
+    function esc(s) {
+      return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+      });
+    }
+    function usd(cents) {
+      return new Intl.NumberFormat(undefined, { style: "currency", currency: "USD" }).format((cents || 0) / 100);
+    }
+    function store(key, val) {
+      try {
+        if (val === undefined) return localStorage.getItem(key);
+        localStorage.setItem(key, val);
+      } catch (e) { return null; }
+    }
+    var toastTimer;
+    function toast(msg) {
+      var t = $("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { t.classList.remove("show"); }, 2400);
+    }
+
+    // ── Links from config ────────────────────────────────────────────
+    var libraryUrl = CFG.libraryUrl || "/";
+    $("homeLink").href = libraryUrl;
+    $("stacksBtn").href = libraryUrl;
+    if (CFG.supportEmail) {
+      $("supportLine").innerHTML = 'Something not right with your order? Write to <a href="mailto:' +
+        esc(CFG.supportEmail) + '">' + esc(CFG.supportEmail) + "</a>.";
+    }
+
+    // ── Ocean canvas: marine snow + bioluminescent motes ─────────────
+    var canvas = $("sea"), ctx = canvas.getContext("2d");
+    var W = 0, H = 0, DPR = Math.min(window.devicePixelRatio || 1, 2);
+    var motes = [], bursts = [], pings = [];
+    var pointer = { x: -9999, y: -9999 };
+
+    function resize() {
+      W = window.innerWidth; H = window.innerHeight;
+      canvas.width = W * DPR; canvas.height = H * DPR;
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      var target = Math.round(Math.min(140, (W * H) / 9000));
+      while (motes.length < target) motes.push(makeMote(true));
+      motes.length = target;
+    }
+    function makeMote(anywhere) {
+      var glow = Math.random() < 0.18;
+      return {
+        x: Math.random() * W,
+        y: anywhere ? Math.random() * H : -10,
+        r: glow ? 1.4 + Math.random() * 1.8 : 0.5 + Math.random() * 1.2,
+        vy: 0.12 + Math.random() * 0.35,
+        vx: (Math.random() - 0.5) * 0.15,
+        phase: Math.random() * Math.PI * 2,
+        glow: glow,
+        hue: Math.random() < 0.8 ? "87,224,205" : "232,187,82",
+      };
+    }
+    function burst(x, y, n) {
+      for (var i = 0; i < n; i++) {
+        var a = Math.random() * Math.PI * 2, s = 1 + Math.random() * 4;
+        bursts.push({
+          x: x, y: y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 1.2,
+          life: 1, r: 1 + Math.random() * 2.2,
+          hue: Math.random() < 0.55 ? "87,224,205" : "232,187,82",
+        });
+      }
+      pings.push({ x: x, y: y, r: 0, life: 1 });
+    }
+
+    function frame(t) {
+      ctx.clearRect(0, 0, W, H);
+      for (var i = 0; i < motes.length; i++) {
+        var m = motes[i];
+        m.y += m.vy;
+        m.x += m.vx + Math.sin(t / 2400 + m.phase) * 0.15;
+        var dx = m.x - pointer.x, dy = m.y - pointer.y, d2 = dx * dx + dy * dy;
+        var near = d2 < 16000;
+        if (near) { var d = Math.sqrt(d2) || 1; m.x += (dx / d) * 0.9; m.y += (dy / d) * 0.9; }
+        if (m.y > H + 10) motes[i] = makeMote(false);
+        if (m.x < -10) m.x = W + 10; else if (m.x > W + 10) m.x = -10;
+        var flicker = 0.55 + 0.45 * Math.sin(t / 700 + m.phase);
+        var alpha = m.glow ? (near ? 0.95 : 0.35 + 0.45 * flicker) : 0.25;
+        ctx.beginPath();
+        ctx.fillStyle = "rgba(" + (m.glow ? m.hue : "190,215,210") + "," + alpha + ")";
+        if (m.glow) { ctx.shadowColor = "rgba(" + m.hue + ",0.9)"; ctx.shadowBlur = near ? 16 : 8; }
+        ctx.arc(m.x, m.y, m.r * (near && m.glow ? 1.5 : 1), 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+      for (var j = pings.length - 1; j >= 0; j--) {
+        var p = pings[j];
+        p.r += 4; p.life -= 0.018;
+        if (p.life <= 0) { pings.splice(j, 1); continue; }
+        ctx.beginPath();
+        ctx.strokeStyle = "rgba(87,224,205," + p.life * 0.5 + ")";
+        ctx.lineWidth = 1.2;
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      for (var k = bursts.length - 1; k >= 0; k--) {
+        var b = bursts[k];
+        b.x += b.vx; b.y += b.vy; b.vx *= 0.97; b.vy = b.vy * 0.97 - 0.02; b.life -= 0.012;
+        if (b.life <= 0) { bursts.splice(k, 1); continue; }
+        ctx.beginPath();
+        ctx.fillStyle = "rgba(" + b.hue + "," + b.life + ")";
+        ctx.shadowColor = "rgba(" + b.hue + ",1)"; ctx.shadowBlur = 12;
+        ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+      requestAnimationFrame(frame);
+    }
+
+    resize();
+    window.addEventListener("resize", resize);
+    window.addEventListener("pointermove", function (e) { pointer.x = e.clientX; pointer.y = e.clientY; });
+    window.addEventListener("pointerleave", function () { pointer.x = pointer.y = -9999; });
+    // Tapping open water (not a button, link or the receipt) sends a ping.
+    document.addEventListener("click", function (e) {
+      if (e.target.closest("a, button, .receipt, .panel, #ascent")) return;
+      burst(e.clientX, e.clientY, 18);
+    });
+    if (!reduceMotion) requestAnimationFrame(frame);
+
+    // ── Ascent intro ─────────────────────────────────────────────────
+    var START_DEPTH = 3800, ASCENT_MS = 2200, surfaced = false;
+    function surface() {
+      if (surfaced) return;
+      surfaced = true;
+      $("ascent").classList.add("done");
+      document.body.classList.add("surfaced");
+      if (!reduceMotion) {
+        var r = $("seal").getBoundingClientRect();
+        setTimeout(function () { burst(r.left + r.width / 2, r.top + r.height / 2, 40); }, 350);
+      }
+    }
+    if (reduceMotion || store("benthic-ty-seen-" + (sessionId || "none")) === "1") {
+      surface();
+    } else {
+      var t0 = performance.now();
+      (function tick(now) {
+        if (surfaced) return;
+        var p = Math.min(1, (now - t0) / ASCENT_MS);
+        var eased = 1 - Math.pow(1 - p, 3);
+        $("ascentDepth").textContent = Math.round(START_DEPTH * (1 - eased)).toLocaleString();
+        $("ascentBar").style.width = (eased * 100) + "%";
+        if (p < 1) requestAnimationFrame(tick); else setTimeout(surface, 250);
+      })(t0);
+      $("ascent").addEventListener("click", surface);
+      window.addEventListener("keydown", surface, { once: true });
+    }
+    store("benthic-ty-seen-" + (sessionId || "none"), "1");
+
+    $("seal").addEventListener("click", function () {
+      var r = this.getBoundingClientRect();
+      burst(r.left + r.width / 2, r.top + r.height / 2, 30);
+    });
+
+    // ── Receipt / order lookup ───────────────────────────────────────
+    function orderRef(id) {
+      var tail = String(id).replace(/^cs_(test_|live_|mock_)?/i, "");
+      return (tail || id).slice(0, 10).toUpperCase();
+    }
+    function fmtDate(iso) {
+      var d = iso ? new Date(iso) : new Date();
+      return isNaN(d) ? "" : d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+    }
+    function setStamp(kind) {
+      var s = $("stamp");
+      s.className = "stamp" + (kind === "pending" ? " pending" : "");
+      s.textContent = kind === "pending" ? "Pending" : "Settled";
+      requestAnimationFrame(function () { s.classList.add("show"); });
+    }
+
+    function renderOrder(order, preview) {
+      var ref = orderRef(order.id);
+      var paid = order.status === "paid";
+      var html = '<div class="receipt-meta">' +
+        (preview ? '<span class="preview-flag">PREVIEW · SAMPLE ORDER</span>' : "") +
+        "<span>ORDER " + esc(ref) + " · " + esc(fmtDate(order.createdAt)) + "</span></div>" +
+        "<h2>" + (paid ? "Ledger settled." : "Awaiting settlement…") + "</h2>";
+
+      (order.items || []).forEach(function (it) {
+        html += '<div class="line"><span>' + esc(it.title) + "</span><span>" + usd(it.priceCents) + "</span></div>";
+      });
+      html += '<div class="total"><span>Total</span><span>' + usd(order.amountCents) + "</span></div>";
+
+      if (paid && order.downloads && order.downloads.length) {
+        html += '<div class="downloads"><div class="downloads-title">Your downloads</div>';
+        order.downloads.forEach(function (d) {
+          var href = preview ? "#" : API + "/download/" + encodeURIComponent(d.token);
+          html += '<a class="dl" href="' + esc(href) + '"' + (preview ? ' data-preview="1"' : "") + ">" +
+            '<span class="dl-icon" aria-hidden="true">↓</span>' +
+            '<span class="dl-text"><b>' + esc(d.title) + "</b><small>Tap to download</small></span></a>";
+        });
+        html += "</div>";
+        html += '<p class="note">Save these files somewhere safe now. Bookmark this page if you want to come back to these links later.</p>';
+      } else if (paid) {
+        html += '<p class="note">Access has been recorded. Your downloads will appear here.</p>';
+      } else {
+        html += '<p class="note">This can take a few seconds once payment clears. This page checks again on its own — or refresh if it doesn\'t update.</p>';
+      }
+
+      html += '<div class="receipt-actions">' +
+        '<button class="chip" type="button" id="copyRef">Copy order ref</button>' +
+        '<button class="chip" type="button" id="printBtn">Print receipt</button></div>';
+
+      $("receiptBody").innerHTML = html;
+      setStamp(paid ? "paid" : "pending");
+      $("eyebrowText").textContent = paid ? "Transmission received · Order " + ref : "Settlement in progress";
+
+      $("copyRef").addEventListener("click", function () {
+        var done = function () { toast("Order reference " + ref + " copied"); };
+        if (navigator.clipboard) navigator.clipboard.writeText(ref).then(done, function () { toast("Your order reference is " + ref); });
+        else toast("Your order reference is " + ref);
+      });
+      $("printBtn").addEventListener("click", function () { window.print(); });
+
+      Array.prototype.forEach.call(document.querySelectorAll(".dl"), function (a) {
+        a.addEventListener("click", function (e) {
+          if (a.dataset.preview) { e.preventDefault(); toast("Preview mode — no real file here"); }
+          a.classList.add("done");
+          a.querySelector(".dl-icon").textContent = "✓";
+          a.querySelector("small").textContent = "Download started";
+          completeStep("download");
+          var r = a.getBoundingClientRect();
+          burst(r.left + 20, r.top + r.height / 2, 14);
+        });
+      });
+
+      // Only show the "retrieve your files" step when there are files.
+      setStepVisible("download", paid && order.downloads && order.downloads.length > 0);
+    }
+
+    function renderGeneric(message) {
+      $("receiptBody").innerHTML =
+        '<div class="receipt-meta"><span>' + esc(fmtDate()) + "</span></div>" +
+        "<h2>Thank you for your purchase.</h2>" +
+        '<p class="note" style="margin-top:0">' + message + "</p>";
+      $("lede").textContent = "You've added to your shelf in the Benthic Business & Intelligence Library. We're glad to have you reading.";
+      setStepVisible("bookmark", false);
+      setStepVisible("download", false);
+    }
+
+    function renderError(msg) {
+      $("receiptBody").innerHTML =
+        "<h2>We couldn't load your order.</h2>" +
+        '<p class="note" style="margin-top:0">' + esc(msg) + "</p>" +
+        '<p class="note">Your payment isn\'t affected by this. Try refreshing in a moment' +
+        (CFG.supportEmail ? ', or write to <a href="mailto:' + esc(CFG.supportEmail) + '" style="color:inherit">' + esc(CFG.supportEmail) + "</a>" : "") +
+        " with your payment confirmation.</p>";
+      setStepVisible("download", false);
+    }
+
+    function lookupOrder() {
+      var attempts = 0;
+      function poll() {
+        fetch(API + "/orders/by-session?session_id=" + encodeURIComponent(sessionId))
+          .then(function (res) {
+            if (res.status === 404) throw new Error("No order matches this link yet.");
+            if (!res.ok) return res.json().catch(function () { return {}; }).then(function (b) { throw new Error(b.error || "Order lookup failed (" + res.status + ")."); });
+            return res.json();
+          })
+          .then(function (order) {
+            renderOrder(order, false);
+            // Stripe's webhook can land a beat after the redirect — poll briefly.
+            if (order.status !== "paid" && attempts < 8) { attempts++; setTimeout(poll, 1500); }
+          })
+          .catch(function (err) {
+            if (attempts < 3) { attempts++; setTimeout(poll, 2000); return; }
+            renderError(err.message || String(err));
+          });
+      }
+      poll();
+    }
+
+    // ── Next-dive checklist ──────────────────────────────────────────
+    var STEPS = [
+      {
+        id: "download",
+        title: "Retrieve your files",
+        body: "Tap each download on your receipt. The Library has no accounts or logins, so save the files to your device now.",
+      },
+      {
+        id: "bookmark",
+        title: "Bookmark this page",
+        body: "This page is your receipt and your download shelf for this order. Press " +
+          (/Mac|iPhone|iPad/.test(navigator.platform) ? "⌘ + D" : "Ctrl + D") + " (or use your browser's share menu) to keep it.",
+        action: { label: "I've bookmarked it", kind: "mark" },
+      },
+      {
+        id: "ledger",
+        title: "Join the Compass Ledger",
+        body: "The Library's companion newsletter — new doctrines and dispatches as they surface.",
+        action: CFG.newsletterUrl ? { label: "Subscribe →", kind: "link", href: CFG.newsletterUrl } : null,
+        hidden: !CFG.newsletterUrl,
+      },
+      {
+        id: "stacks",
+        title: "Return to the Stacks",
+        body: "Browse the rest of the shelves for your next doctrine.",
+        action: { label: "Back to the Library →", kind: "link", href: libraryUrl },
+      },
+    ];
+    var doneKey = "benthic-ty-steps-" + (sessionId || "none");
+    var done = {};
+    try { done = JSON.parse(store(doneKey) || "{}") || {}; } catch (e) { done = {}; }
+
+    function buildSteps() {
+      var ol = $("steps");
+      ol.innerHTML = "";
+      STEPS.forEach(function (s, i) {
+        var li = document.createElement("li");
+        li.className = "step" + (done[s.id] ? " done" : "");
+        li.dataset.id = s.id;
+        if (s.hidden) li.hidden = true;
+        var btns = "";
+        if (s.action) {
+          btns = '<div class="btns">' + (s.action.kind === "link"
+            ? '<a class="btn btn-primary btn-sm" data-act="link" href="' + esc(s.action.href) + '"' +
+              (/^https?:/.test(s.action.href) ? ' target="_blank" rel="noopener"' : "") + ">" + esc(s.action.label) + "</a>"
+            : '<button class="btn btn-primary btn-sm" type="button" data-act="mark">' + esc(s.action.label) + "</button>") + "</div>";
+        }
+        li.innerHTML =
+          '<button class="step-head" type="button" aria-expanded="false">' +
+            '<span class="check" role="checkbox" tabindex="0" aria-checked="' + (!!done[s.id]) + '" aria-label="Mark ' + esc(s.title) + ' done">' +
+              '<svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>' +
+            '<span class="step-title">' + esc(s.title) + "</span>" +
+            '<span class="step-num">0' + (i + 1) + "</span>" +
+            '<span class="chev" aria-hidden="true">▼</span>' +
+          "</button>" +
+          '<div class="step-body"><div><p>' + esc(s.body) + "</p>" + btns + "</div></div>";
+        ol.appendChild(li);
+
+        var head = li.querySelector(".step-head"), check = li.querySelector(".check");
+        head.addEventListener("click", function (e) {
+          if (e.target.closest(".check")) return;
+          var open = li.classList.toggle("open");
+          head.setAttribute("aria-expanded", open);
+        });
+        function toggleCheck(e) {
+          e.stopPropagation();
+          if (done[s.id]) { delete done[s.id]; li.classList.remove("done"); check.setAttribute("aria-checked", "false"); saveSteps(); }
+          else completeStep(s.id);
+        }
+        check.addEventListener("click", toggleCheck);
+        check.addEventListener("keydown", function (e) { if (e.key === " " || e.key === "Enter") { e.preventDefault(); toggleCheck(e); } });
+        var act = li.querySelector("[data-act]");
+        if (act) act.addEventListener("click", function () { completeStep(s.id); });
+      });
+      // Open the first unfinished step.
+      var first = ol.querySelector(".step:not(.done):not([hidden])");
+      if (first) { first.classList.add("open"); first.querySelector(".step-head").setAttribute("aria-expanded", "true"); }
+      updateGauge();
+    }
+    function saveSteps() { store(doneKey, JSON.stringify(done)); updateGauge(); }
+    function completeStep(id) {
+      if (done[id]) return;
+      done[id] = true;
+      var li = document.querySelector('.step[data-id="' + id + '"]');
+      if (li) {
+        li.classList.add("done");
+        li.querySelector(".check").setAttribute("aria-checked", "true");
+        var r = li.querySelector(".check").getBoundingClientRect();
+        burst(r.left + r.width / 2, r.top + r.height / 2, 12);
+      }
+      saveSteps();
+    }
+    function setStepVisible(id, visible) {
+      var li = document.querySelector('.step[data-id="' + id + '"]');
+      if (!li) return;
+      li.hidden = !visible;
+      if (!visible && li.classList.contains("open")) {
+        li.classList.remove("open");
+        var next = document.querySelector(".step:not(.done):not([hidden])");
+        if (next) next.classList.add("open");
+      }
+      updateGauge();
+    }
+    function updateGauge() {
+      var visible = Array.prototype.filter.call(document.querySelectorAll(".step"), function (li) { return !li.hidden; });
+      visible.forEach(function (li, i) { li.querySelector(".step-num").textContent = "0" + (i + 1); });
+      var n = visible.filter(function (li) { return li.classList.contains("done"); }).length;
+      $("gaugeNum").textContent = n + "/" + visible.length;
+      $("gaugeFill").style.width = (visible.length ? (n / visible.length) * 100 : 0) + "%";
+      if (visible.length && n === visible.length && !updateGauge.cheered) {
+        updateGauge.cheered = true;
+        toast("All charted. Safe travels, reader.");
+      }
+    }
+
+    // ── Signal flare / dispatches ────────────────────────────────────
+    var DISPATCHES = [
+      "Every doctrine on the shelf began as a single signal from the dark.",
+      "Pressure makes the deep quiet. Quiet makes the thinking clear.",
+      "Read slowly. The best ideas settle like marine snow.",
+      "A good doctrine is a lantern, not a map — it shows you the next step.",
+      "The abyss rewards the patient diver.",
+      "What you know compounds. Keep the ledger honest.",
+      "You're one more light in the deep. Thank you for reading.",
+    ];
+    var di = 0, flares = 0;
+    $("flareBtn").addEventListener("click", function () {
+      var r = this.getBoundingClientRect();
+      burst(r.left + r.width / 2, r.top, 46);
+      flares++;
+      di = (di + 1) % DISPATCHES.length;
+      var d = $("dispatch");
+      d.classList.add("fade");
+      setTimeout(function () { d.textContent = DISPATCHES[di]; d.classList.remove("fade"); }, 300);
+      $("flareCount").textContent = flares === 1 ? "1 flare sent to the surface" : flares + " flares sent to the surface";
+    });
+
+    // ── Boot ─────────────────────────────────────────────────────────
+    buildSteps();
+
+    if (isDemo) {
+      renderOrder({
+        id: "cs_test_SAMPLE12345",
+        status: "paid",
+        amountCents: 4800,
+        createdAt: new Date().toISOString(),
+        items: [
+          { title: "Sample Doctrine I", priceCents: 2900 },
+          { title: "Sample Doctrine II", priceCents: 1900 },
+        ],
+        downloads: [
+          { token: "sample-1", title: "Sample Doctrine I" },
+          { token: "sample-2", title: "Sample Doctrine II" },
+        ],
+      }, true);
+    } else if (sessionId && API) {
+      lookupOrder();
+    } else if (sessionId && !API) {
+      renderGeneric("Your payment went through. This page isn't connected to the Library's order system yet, so your downloads can't be shown here.");
+    } else {
+      renderGeneric("Your purchase is complete. If you paid in crypto, access opens once the Library confirms receipt of your transfer.");
+    }
+  })();
+  </script>
+</body>
+</html>
